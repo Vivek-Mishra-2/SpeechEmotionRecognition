@@ -3,56 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emotion Prediction from Audio</title>
+    <title>Machine Learning Model Demo</title>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="path/to/tfjs_model/model.js"></script>
 </head>
 <body>
-    <h1>Emotion Prediction from Audio</h1>
+    <h1>Machine Learning Model Demo</h1>
     <div>
-        <label for="audioInput">Upload Audio File (MP3):</label>
-        <input type="file" id="audioInput" accept=".mp3">
-    </div>
-    <div>
-        <button onclick="predict()">Predict Emotion</button>
+        <label for="inputData">Input Data:</label>
+        <input type="text" id="inputData">
+        <button onclick="predict()">Predict</button>
     </div>
     <div id="output"></div>
 
     <script>
         async function predict() {
-            const audioInput = document.getElementById('audioInput');
+            const inputData = document.getElementById('inputData').value;
             
-            if (!audioInput.files || audioInput.files.length === 0) {
-                alert('Please select an MP3 audio file.');
-                return;
-            }
+            // Preprocess input data if needed
 
-            const file = audioInput.files[0];
-            const audioData = await readFile(file);
-            
-            // Preprocess audio data if needed
-            
             const model = await tf.loadLayersModel('path/to/tfjs_model/model.json');
-            const inputTensor = tf.tensor2d([[...audioData]]);  // Adjust input format based on your model's input
+            const inputTensor = tf.tensor2d([[parseFloat(inputData)]]);  // Adjust the input format based on your model's input
             const prediction = model.predict(inputTensor);
             const output = prediction.dataSync()[0];
 
-            document.getElementById('output').innerText = `Predicted Emotion: ${output}`;
-        }
-
-        function readFile(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const arrayBuffer = event.target.result;
-                    const audioData = new Int16Array(arrayBuffer);
-                    resolve(audioData);
-                };
-                reader.onerror = (error) => {
-                    reject(error);
-                };
-                reader.readAsArrayBuffer(file);
-            });
+            document.getElementById('output').innerText = `Prediction: ${output}`;
         }
     </script>
 </body>
